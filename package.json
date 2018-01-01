@@ -1,0 +1,11 @@
+{
+  "name": "blokusjs",
+  "version": "1.0.0",
+  "description": "Blokus game",
+  "repository": "git@github.com:karatheodory/blokusjs.git",
+  "author": "Vasily Loginov <loginov.vasily@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "fabric": "^1.7.22"
+  }
+}
