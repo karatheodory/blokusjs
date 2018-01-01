@@ -1,0 +1,2 @@
+# blokusjs
+Blokus Game
