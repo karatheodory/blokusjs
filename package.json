@@ -1,11 +1,19 @@
 {
   "name": "blokusjs",
   "version": "1.0.0",
-  "description": "Blokus game",
+  "description": "Blokus game: build tools",
   "repository": "git@github.com:karatheodory/blokusjs.git",
   "author": "Vasily Loginov <loginov.vasily@gmail.com>",
   "license": "MIT",
-  "dependencies": {
-    "fabric": "^1.7.22"
+  "devDependencies": {
+    "copy-webpack-plugin": "^4.3.1",
+    "webpack": "^3.10.0",
+    "webpack-dev-server": "^2.9.7"
+  },
+  "scripts": {
+    "build": "npx webpack --config webpack.config.js",
+    "watch": "npx webpack --config webpack.config.js --progress --watch",
+    "start": "npx webpack-dev-server --open",
+    "clean": "rm -rf ./dist"
   }
 }
