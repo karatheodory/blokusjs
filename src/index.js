@@ -1,4 +1,5 @@
 import 'fabric';
+import Game from './model/game';
 
 const canvas = new fabric.Canvas('field');
 const rect = new fabric.Rect({
@@ -7,6 +8,7 @@ const rect = new fabric.Rect({
   fill: 'black',
   width: 20,
   height: 20,
-  selectable: false
 });
 canvas.add(rect);
+const g = Game.createNew(4);
+window.game = g;
