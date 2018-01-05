@@ -31,12 +31,25 @@ function createPlayerFigures(playerNumber) {
 class Player {
   constructor(name, figures) {
     this._figures = figures;
-    this._isGaveUp = false;
     this._name = name;
+    this._isGaveUp = false;
+    this._isFirstTurn = true;
   }
 
   get figures() {
     return this._figures;
+  }
+
+  get isFirstTurn() {
+    return this._isFirstTurn;
+  }
+
+  set isFirstTurn(value) {
+    if (this._isFirstTurn && !value) {
+      this._isFirstTurn = value;
+    } else {
+      throw new Error('Unexpected first turn set.');
+    }
   }
 
   get isGaveUp() {
@@ -60,7 +73,7 @@ class Player {
     if (idx !== -1) {
       this._figures.splice(idx, 1);
     } else {
-      throw new Error(`Figure ${figure} is not available for player ${this._playerNumber}`);
+      throw new Error(`Figure ${figure} is not available for player ${this._name}`);
     }
   }
 
@@ -83,12 +96,58 @@ class Field {
     return this._fieldSize;
   }
 
-  canPutFigure() {
-    throw new Error('Not implemented');
+  hasCornerOfSameColor(x, y, color) {
+    return (this._field[x - 1][y - 1] === color)
+      || (this._field[x - 1][y + 1] === color)
+      || (this._field[x + 1][y - 1] === color)
+      || (this._field[x + 1][y + 1] === color)
   }
 
-  putFigure() {
-    throw new Error('Not implemented');
+  hasBorderOfSameColor(x, y, color) {
+    return (this._field[x - 1][y] === color)
+      || (this._field[x + 1][y] === color)
+      || (this._field[x][y - 1] === color)
+      || (this._field[x][y + 1] === color)
+  }
+
+  isEmpty(x, y) {
+    return this._field[x][y] === 0;
+  }
+
+  /**
+   * Find the points on the field where the figure wants to be placed.
+   * */
+  _getMappedPoints(x, y, figure) {
+    return figure.figureArr.map((row, rowIndex) => row.map((color, colIndex) => ({
+      x: x + rowIndex,
+      y: y + colIndex,
+      color
+    })))
+      .reduce((res, row) => res.concat(row), [])
+      .filter(item => item.color);
+  }
+
+  canPutFigure(x, y, figure) {
+    const mappedFigurePoints = this._getMappedPoints(x, y, figure);
+    const pointParams = mappedFigurePoints.map((point) => (Object.assign({}, point, {
+      hasCornerOfSameColor: this.hasCornerOfSameColor(point.x, point.y, point.color),
+      hasBorderOfSameColor: this.hasBorderOfSameColor(point.x, point.y, point.color),
+      isEmpty: this.isEmpty(point.x, point.y)
+    })));
+
+    return !!pointParams.filter(p => p.hasCornerOfSameColor)
+      && !pointParams.filter(p => p.hasBorderOfSameColor)
+      && !pointParams.filter(p => !p.isEmpty);
+  }
+
+  putFigure(x, y, figure) {
+    if (!this.canPutFigure(x, y, figure)) {
+      throw new Error(`Cannot put ${figure} into (${x}, ${y}).`);
+    }
+    const mappedFigurePoints = this._getMappedPoints(x, y, figure);
+    mappedFigurePoints.forEach(({x, y, color}) => {
+      this._field[x][y] = color;
+    });
   }
 }
 

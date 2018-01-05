@@ -88,19 +88,58 @@ export class Figure {
       .trim();
     this.name = name;
     this.figureStr = figureStr;
+    const lines = figureStr.split('\n');
+    /**
+     * @type Array[number]
+     * */
+    this.figureArr = lines.map(
+      line => line.split('')
+        .map(ch => +ch)
+    );
+  }
+
+  transpose() {
+    this.figureArr = Figure.transpose(this.figureArr);
+  }
+
+  rotateClockwise() {
+    this.figureArr = Figure.transpose(this.figureArr);
+    this.figureArr = Figure.reverseLines(this.figureArr);
+  }
+
+  mirror() {
+    this.figureArr = Figure.reverseLines(this.figureArr);
   }
 
   toString() {
-    return `Figure<${this.name}>:${this.figureStr}`;
+    return `Figure<${this.name}>:\n${this.figureStr}`;
   }
 
   valueOf() {
     return this.figureStr;
   }
+
+  /**
+   * @param {Array} arr
+   * */
+  static reverseLines(arr) {
+    arr = arr.slice();
+    for (let i in arr) {
+      arr[i] = arr[i].slice().reverse();
+    }
+    return arr;
+  }
+
+  /**
+   * @param {Array} arr
+   * */
+  static transpose(arr) {
+    return arr[0].map((_, index) => arr.map(line => line[index]))
+  }
 }
 
 /**
- * @type Array<Figure>
+ * @type Array[Figure]
  * */
 export const FIGURES = Object.keys(FIGURES_STRINGS)
   .map(key => new Figure(key, FIGURES_STRINGS[key]));
